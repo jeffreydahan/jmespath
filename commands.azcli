@@ -1,0 +1,23 @@
+## https://jmespath.org/
+## https://docs.microsoft.com/en-us/cli/azure/query-azure-cli?tabs=concepts%2Cbash
+## https://www.azurecitadel.com/cli/jmespath/
+
+
+az login
+subscriptionId=`az account list --query "[?name=='MS Internal'].id | [0]"` # Insert your Subscription Name
+subscriptionId=`eval echo $subscriptionId`
+echo $subscriptionId
+az account set --subscription ${subscriptionId}
+
+# query for default = true subscription
+az account list --query "[?isDefault].{Name:name, Default:isDefault, SubscriptionId:id, TenantId:tenantId}" --output table
+
+# list VMs that have GPUs
+az vm list-skus -l $location --query "[].{Name:name, Family:family, GPUs:capabilities[?name=='GPUs'].value | [0], vCPUs:capabilities[?name=='vCPUs'].value | [0], MemGB:capabilities[?name=='MemoryGB'].value | [0]} | [?GPUs != null]" --output table
+
+# list VMs starting with a value
+az vm list-skus -l eastus --query "[?starts_with(name,'Standard_HB')].{Name:name}" --output table
+
+# Set query using a variable
+query="[?isDefault].{Name:name, Default:isDefault, SubscriptionId:id, TenantId:tenantId}"
+az account list --query "$query" --output table

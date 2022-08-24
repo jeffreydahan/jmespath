@@ -21,3 +21,10 @@ az vm list-skus -l eastus --query "[?starts_with(name,'Standard_HB')].{Name:name
 # Set query using a variable
 query="[?isDefault].{Name:name, Default:isDefault, SubscriptionId:id, TenantId:tenantId}"
 az account list --query "$query" --output table
+  # or
+query="[?isDefault==\`true\`].{Name:name, Default:isDefault, SubscriptionId:id, TenantId:tenantId}"
+az account list --query "$query" --output table
+
+# To check if a Boolean property is false, you can use the comparison operator == or the logical operator !.
+az account list --query '[?!isDefault].name'
+az account list --query "[?isDefault == \`false\`].name"
